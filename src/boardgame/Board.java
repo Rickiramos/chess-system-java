@@ -1,33 +1,69 @@
 package boardgame;
 
 public class Board {
+	
 	private int rows;
-	private int colunns;
+	private int columns;
 	private Piece[][] pieces;
 	
-	public Board(int rows, int colunns) {
+	public Board(int rows, int columns) {
+		if (rows < 1 || columns < 1) {
+			throw new BoardException("Error creating Board: there must be at least 1 row and 1 column");
+		}
 	
 		this.rows = rows;
-		this.colunns = colunns;
-		pieces = new Piece [rows][colunns];
+		this.columns = columns;
+		pieces = new Piece [rows][columns];
 	}
 
 	public int getRows() {
 		return rows;
 	}
 
-	public void setRows(int rows) {
-		this.rows = rows;
+	public int getColumns() {
+		return columns;
 	}
 
-	public int getColunns() {
-		return colunns;
+
+	//retornando um objeto do tipo piece com nome do metodo piece
+	//recebendo int linha e coluna fazendo o retorno da matriz
+	//na linha e coluna indicado
+	public Piece piece (int row, int column) {
+		if (!positionExists(row, column)) {
+			throw new BoardException("Position not on the board");
+		}
+		return pieces[row][column];
 	}
-
-	public void setColunns(int colunns) {
-		this.colunns = colunns;
-	} 
-
+	//fazendo uma sobrecarga
+	public Piece piece(Position position) {
+		if (!positionExists(position)) {
+			throw new BoardException("Position not on the board");
+		}
+		return pieces[position.getRow()][position.getColumn()];
+	}
 	
+	public void placePiece(Piece piece, Position position) {
+		if (thereIsAPiece(position)) {
+			throw new BoardException("There is already a piece on position " + position);
+		}
+		pieces[position.getRow()][position.getColumn()] = piece;
+		piece.position = position;
+	}
 	
+	public boolean positionExists(int row, int column) {
+		return row >= 0 && row < rows && column >= 0 && column < columns;
+		// condicao de existencia: dentro do tabuleiro 
+	}
+	
+	public boolean positionExists(Position position) {
+		return positionExists(position.getRow(), position.getColumn());
+		
+	}
+	public boolean thereIsAPiece (Position position) {
+		if (!positionExists(position)) {
+			throw new BoardException("Position not on the board");
+		}
+		return piece(position) != null;
+	}
 }
+
